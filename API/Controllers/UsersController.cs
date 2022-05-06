@@ -19,7 +19,7 @@ namespace API.Controllers
             _context = context;
         }
 
-        //Get all app users
+        //Get all AppUsers
         // api/users
         //synchronous code
         /*[HttpGet]
