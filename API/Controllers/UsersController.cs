@@ -29,7 +29,6 @@ namespace API.Controllers
         }*/
         //Asynchronous code - more scalable
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
             var Users = _context.Users.ToListAsync();
