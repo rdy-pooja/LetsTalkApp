@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
+using API.DTOs;
 using API.Entities;
+using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _context;
-        public UsersController(DataContext context)
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         //Get all AppUsers
@@ -29,20 +35,19 @@ namespace API.Controllers
         }*/
         //Asynchronous code - more scalable
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers()
         {
-            var Users = _context.Users.ToListAsync();
-            return await Users;
+            var users = await _userRepository.GetMembersAsync();
+            return Ok(users);
         }
 
         //Getting a specific user using Id parameter
         // api/users/1
-        [HttpGet("{id}")]
-        [Authorize]
-        public async Task<ActionResult<AppUser>> GetUsers(int Id)
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDTO>> GetUsers(string username)
         {
-            var User = _context.Users.FindAsync(Id);
-            return await User;
+            var User = await _userRepository.GetMemberAsync(username);
+            return User;
         }
     }
 }
